@@ -1,5 +1,8 @@
 from flask import Blueprint, request
-from flask_restful import Resource, Api, url_for, reqparse, fields, inputs
+from flask_restful import (Resource, Api, url_for, reqparse, fields, inputs,
+                           marshal)
+
+import models
 
 
 MODULE_PATH = 'resources.todos'
@@ -8,9 +11,10 @@ NAMESPACE = __name__
 
 # FOR PARSING OUTPUT (USED BY MARSHAL)
 todo_fields = {
+    'id': fields.Integer,
     'name': fields.String,
-    'complete': fields.Boolean,
-    'edited': fields.Boolean,
+    #'complete': fields.Boolean,
+    #'edited': fields.Boolean,
 }
 
 class ToDoList(Resource):
@@ -52,13 +56,12 @@ class ToDoList(Resource):
         '''
 
     def get(self):
+        todos = models.Todo.select()
 
-        return [
-            {'name': 'to_do_item_1'},
-            {'name': 'to_do_item_2'},
-            {'name': 'to_do_item_3'},
-            {'name': 'to_do_item_4'}
-        ]
+        response_body = [marshal(todo, todo_fields) for todo in todos]
+
+        print(response_body)
+        return response_body
 
     def post(self):
 
@@ -75,15 +78,44 @@ class ToDoList(Resource):
             print(type(value))
         print("==== END DEBUG POST (reqparse) ====")
 
+        # create the corresponding DB entry and return it
+        todo = models.Todo.create(**pkwargs)
 
-        response_body = {
-            'name': 'some fucking bullshit',
-            'complete': True,
-            'edited': False
-        }
+        # use marshal to convert the peewee model instance into a 
+        # data structure that is JSONable.
+        #
+        # when used directly marshal takes:
+        # - the data object
+        # - the mapping dictionary
+        # - (optionally) an envelope
+        #
+        # The mapping dictionary describes the types that will be in the
+        # final output, not necessarily the actual types in the data
+        # object.
+        # Examples:
+        # data     | mapped type | output value
+        # ---------|-------------|--------------
+        # b'hello' | str         | "b'hello'"
+        # r'hello' | str         | "hello"
+        # 0        | bool        | False
+        # 17       | bool        | True
+        # 3.14159  | int         | 3
+        #
+        # Any values in the data object with no corresponding mapping will be
+        # omitted from the output.
+        # Any missing values in the data object that have mappings will be
+        # returned as None.
+        # If passed an iterable, marshal will operate on each element in the
+        # iterable and returning a list of OrderedDicts
+        #
+        # when used as a decorator (`marshal_with`), marshal works the same
+        # way except that if the decorated function returns a tuple, only
+        # the first element in the tuple will be marshalled, the rest of the
+        # tuple will be passed through unchanged.
+        response_body = marshal(todo, todo_fields)
         status_code = 201
         additional_headers = {
-            'Location': url_for('resources.todos.todo', id=1)
+            'Location': url_for('resources.todos.todo', id=todo.id)
         }
 
         return (response_body, status_code, additional_headers)
