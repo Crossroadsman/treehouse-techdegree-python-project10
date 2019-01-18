@@ -13,47 +13,64 @@ NAMESPACE = __name__
 todo_fields = {
     'id': fields.Integer,
     'name': fields.String,
-    #'complete': fields.Boolean,
-    #'edited': fields.Boolean,
+    'completed': fields.Boolean,
+    'edited': fields.Boolean,
 }
 
+
+# Helper Functions
+# ----------------
+def set_reqparser():
+    """The nature of this API is such that both List and Item resources
+    will need to handle `name`, `complete`, and `edited` fields. Therefore,
+    we can centralise the parser definition and just call it in each
+    resource's initialiser
+    """
+
+    parser = reqparse.RequestParser()
+
+    # Define the input arguments that can be parsed by by reqparse
+    # and any validation
+    #
+    # We can supply a default value `default=<value>`
+    #
+    # Every argument we add to reqparse will be validated by
+    # reqparse and returned when calling `parse_args`.
+    # we don't need to add a validator for every argument in the input
+    # JSON, just those that we want to be able to access with `parse_args`
+    parser.add_argument(
+        'name',
+        required=True,
+        help='No todo name provided',
+        location=['form', 'json']
+    )
+    #
+    # We might want these later, so they are left for now.
+    parser.add_argument(
+        'completed',
+        required=False,
+        help='Invalid value for complete',
+        type=inputs.boolean,
+        location=['form', 'json'],
+        default=False
+    )
+    parser.add_argument(
+        'edited',
+        required=False,
+        help='Invalid value for edited',
+        type=inputs.boolean,
+        location=['form', 'json'],
+        default=False
+    )
+    return parser
+
+
+# Resource Classes
+# ----------------
 class ToDoList(Resource):
 
     def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-
-        # Define the input arguments that can be parsed by by reqparse
-        # and any validation
-        #
-        # We can supply a default value `default=<value>`
-        self.reqparse.add_argument(
-            'name',
-            required=True,
-            help='No todo name provided',
-            location=['form', 'json']
-        )
-        # every argument we add to reqparse will be validated by
-        # reqparse and returned when calling `parse_args`.
-        # we don't need to add a validator for every argument in the input
-        # JSON, just those that we want to be able to access with `parse_args`
-        #
-        # We might want these later, so they are left for now.
-        '''
-        self.reqparse.add_argument(
-            'complete',
-            required=False,
-            help='Invalid value for complete',
-            type=inputs.boolean,
-            location=['form', 'json']
-        )
-        self.reqparse.add_argument(
-            'edited',
-            required=False,
-            help='Invalid value for edited',
-            type=inputs.boolean,
-            location=['form', 'json']
-        )
-        '''
+        self.reqparse = set_reqparser()
 
     def get(self):
         todos = models.Todo.select()
@@ -80,6 +97,9 @@ class ToDoList(Resource):
 
         # create the corresponding DB entry and return it
         todo = models.Todo.create(**pkwargs)
+        # Clear the 'edited' state on save
+        todo.edited = False
+        todo.save()
 
         # use marshal to convert the peewee model instance into a 
         # data structure that is JSONable.
@@ -120,6 +140,7 @@ class ToDoList(Resource):
 
         return (response_body, status_code, additional_headers)
 
+    '''
     def delete(self):
 
         # we can get access to the request through Flask's request context
@@ -171,47 +192,19 @@ class ToDoList(Resource):
         )
 
         return response
+    '''
 
 class ToDo(Resource):
     def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-
-        # Define the input arguments that can be parsed by by reqparse
-        # and any validation
-        #
-        # We can supply a default value `default=<value>`
-        self.reqparse.add_argument(
-            'name',
-            required=True,
-            help='No todo name provided',
-            location=['form', 'json']
-        )
-        # every argument we add to reqparse will be validated by
-        # reqparse and returned when calling `parse_args`.
-        # we don't need to add a validator for every argument in the input
-        # JSON, just those that we want to be able to access with `parse_args`
-        #
-        # We might want these later, so they are left for now.
-        '''
-        self.reqparse.add_argument(
-            'complete',
-            required=False,
-            help='Invalid value for complete',
-            type=inputs.boolean,
-            location=['form', 'json']
-        )
-        self.reqparse.add_argument(
-            'edited',
-            required=False,
-            help='Invalid value for edited',
-            type=inputs.boolean,
-            location=['form', 'json']
-        )
-        '''
+        self.reqparse = set_reqparser()
 
     @marshal_with(todo_fields)
     def put(self, id):
         pkwargs = self.reqparse.parse_args()
+
+        # we're saving the current item's state so clear the edited
+        # status
+        pkwargs['edited'] = False
 
         # .update() returns a query not a model object
         query = models.Todo.update(**pkwargs).where(models.Todo.id==id)
