@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_restful import (Resource, Api, url_for, reqparse, fields, inputs,
-                           marshal)
+                           marshal, marshal_with)
 
 import models
 
@@ -173,6 +173,58 @@ class ToDoList(Resource):
         return response
 
 class ToDo(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+
+        # Define the input arguments that can be parsed by by reqparse
+        # and any validation
+        #
+        # We can supply a default value `default=<value>`
+        self.reqparse.add_argument(
+            'name',
+            required=True,
+            help='No todo name provided',
+            location=['form', 'json']
+        )
+        # every argument we add to reqparse will be validated by
+        # reqparse and returned when calling `parse_args`.
+        # we don't need to add a validator for every argument in the input
+        # JSON, just those that we want to be able to access with `parse_args`
+        #
+        # We might want these later, so they are left for now.
+        '''
+        self.reqparse.add_argument(
+            'complete',
+            required=False,
+            help='Invalid value for complete',
+            type=inputs.boolean,
+            location=['form', 'json']
+        )
+        self.reqparse.add_argument(
+            'edited',
+            required=False,
+            help='Invalid value for edited',
+            type=inputs.boolean,
+            location=['form', 'json']
+        )
+        '''
+
+    @marshal_with(todo_fields)
+    def put(self, id):
+        pkwargs = self.reqparse.parse_args()
+
+        # .update() returns a query not a model object
+        query = models.Todo.update(**pkwargs).where(models.Todo.id==id)
+        query.execute()
+
+        # now we have to actually get the model
+        response_body = models.Todo.get(models.Todo.id==id)
+        status_code = 200
+        additional_headers = {
+            'Location': url_for('resources.todos.todos')
+        }
+        
+        return (response_body, status_code, additional_headers)
 
     def delete(self, id):
 
