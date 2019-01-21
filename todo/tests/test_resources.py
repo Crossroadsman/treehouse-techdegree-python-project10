@@ -24,7 +24,7 @@ class TestToDoList(unittest.TestCase):
         # (we get a file handle and a filename with full path)
         # (note, the file handle is low-level so we need to use
         # os.close() instead of <fh>.close() to close it)
-        temp_db_fh, app.app.config["DATABASE"] = tempfile.mkstemp()
+        self.temp_db_fh, app.app.config["DATABASE"] = tempfile.mkstemp()
 
         # Set testing mode
         # (This disables error catching during request handling, so
@@ -42,7 +42,7 @@ class TestToDoList(unittest.TestCase):
 
     def tearDown(self):
         # perform cleanup
-        os.close(temp_db_fh)  # close the file
+        os.close(self.temp_db_fh)  # close the file
         os.unlink(app.app.config["DATABASE"])  # remove the file
 
     # Tests
