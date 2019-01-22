@@ -3,18 +3,21 @@ import unittest
 import tempfile
 import json
 
+from flask import request
+
 from peewee import *
 
 # the below syntax works when calling
 # `python3 -m unittest` from the main project directory
 # as long as the tests directory has a __init__.py file in it
 # (even though __init__.py is optional since Python 3.3)
+#from flask import current_app as app
 import app
 import config
 import models
 
 
-VERBOSE = True
+VERBOSE = False
 
 
 # Throughout this file:
@@ -349,37 +352,57 @@ class TestToDo(unittest.TestCase):
             self.assertFalse(item.edited)
 
     def test_todo_delete_with_valid_data_returns_correct_response(self):
-        """
-        uri = '/api/v1/todos'
-        headers = {
-            'ContentType': 'application/json',
-            'dataType': 'json'
-        }
-        data = {
-            'name': 'a valid test item',
-            'completed': False,
-            'edited': True
-        }
-
-        response = self.app.post(uri,
-                                 data=json.dumps(data),
-                                 content_type='application/json'
-        )
-
-        response_text = response.get_json()
         
-        expected_status = 201
-        expected_body = {
-            'name': 'a valid test item',
-            'completed': False,
-            'edited': False
-        }
+        test_todo_item_data = [
+            {'name': 'first test item', 'completed': True},
+            {'name': 'second test item', 'completed': False},
+            {'name': 'a third test item', 'completed': False},
+        ]
+        for todo_item in test_todo_item_data:
+            models.Todo.create(**todo_item)
+
+        uri = '/api/v1/todos/2'
+        data = None
+
+        response = self.app.delete(uri, data=data)
+        response_text = response.get_data(as_text=True)
+
+        expected_status = 204
+        with app.app.test_request_context():
+            self.app.get(uri)
+            base_url = request.url_root
+            print(base_url)
+        expected_location = base_url + 'api/v1/todos'
+        expected_response_body = ""
 
         self.assertEqual(response.status_code, expected_status)
-        for key, value in expected_body.items():
-            self.assertEqual(response_text[key], value)
-        """
-        self.fail('Implement me')
+        self.assertEqual(response.headers['Location'], expected_location)
+        self.assertEqual(response_text, expected_response_body)
+
+    def test_todo_delete_with_valid_data_only_modifies_specified_item(self):
+        
+        test_todo_item_data = [
+            {'name': 'do not delete', 'completed': True},
+            {'name': 'DELETE ME', 'completed': False},
+            {'name': 'also do not erase', 'completed': False},
+        ]
+        for todo_item in test_todo_item_data:
+            models.Todo.create(**todo_item)
+
+        uri = '/api/v1/todos/2'
+        data = None
+
+        self.app.delete(uri, data=data)
+
+        do_not_delete = models.Todo.select().where(models.Todo.name=='do not delete')
+        delete_me = models.Todo.select().where(models.Todo.name=='DELETE ME')
+        also_do_not_erase = models.Todo.select().where(models.Todo.name=='also do not erase')
+        
+        self.assertEqual(do_not_delete.count(), 1)
+        self.assertTrue(do_not_delete.get().completed)
+        self.assertEqual(delete_me.count(), 0)
+        self.assertEqual(also_do_not_erase.count(), 1)
+        self.assertFalse(also_do_not_erase.get().completed)
 
 # ------------------------
 
