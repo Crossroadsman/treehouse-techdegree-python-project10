@@ -9,6 +9,9 @@ MODULE_PATH = 'resources.todos'
 NAMESPACE = __name__
 
 
+VERBOSE = True
+
+
 # FOR PARSING OUTPUT (USED BY MARSHAL)
 todo_fields = {
     'id': fields.Integer,
@@ -77,7 +80,6 @@ class ToDoList(Resource):
 
         response_body = [marshal(todo, todo_fields) for todo in todos]
 
-        print(response_body)
         return response_body
 
     def post(self):
@@ -86,14 +88,15 @@ class ToDoList(Resource):
         # Thus if there are input arguments in the JSON that we receive
         # but don't care about, we can just not parse them
         pkwargs = self.reqparse.parse_args()
-        print("==== DEBUG POST (reqparse) ====")
-        for key, value in pkwargs.items():
-            print(f'key: {key}')
-            print(type(key))
+        if VERBOSE:
+            print("==== DEBUG POST (reqparse) ====")
+            for key, value in pkwargs.items():
+                print(f'key: {key}')
+                print(type(key))
 
-            print(f'value: {value}')
-            print(type(value))
-        print("==== END DEBUG POST (reqparse) ====")
+                print(f'value: {value}')
+                print(type(value))
+            print("==== END DEBUG POST (reqparse) ====")
 
         # create the corresponding DB entry and return it
         todo = models.Todo.create(**pkwargs)
@@ -140,59 +143,6 @@ class ToDoList(Resource):
 
         return (response_body, status_code, additional_headers)
 
-    '''
-    def delete(self):
-
-        # we can get access to the request through Flask's request context
-        # by importing `flask.request`
-        #
-        # Once we have it, we can drill into it
-        if request:
-            print("==== DEBUG DELETE (request)====")
-            print(request)
-            print(type(request))
-            print(dir(request))
-            for att in [
-                request.base_url,
-                request.content_encoding,
-                request.content_type,
-                request.data,
-                request.endpoint,
-                request.files,
-                request.form,
-                request.full_path,
-                request.get_data(),
-                request.get_json(force=True),
-                request.json,
-                request.headers,
-                request.host,
-                request.host_url,
-                request.method,
-                request.path,
-                request.query_string,
-                request.remote_addr,
-                request.url,
-                request.url_root
-            ]:
-                print(att)
-                print(type(att))
-            print("==== END DEBUG DELETE (request)====")
-
-        id = ''
-        response_body = ''
-        status_code = 204  # (no content)
-        additional_headers = {
-            'Location': url_for('resources.todos.todos')
-        }
-
-        response = (
-            response_body,
-            status_code,
-            additional_headers
-        )
-
-        return response
-    '''
 
 class ToDo(Resource):
     def __init__(self):
@@ -221,6 +171,10 @@ class ToDo(Resource):
 
     def delete(self, id):
 
+        # .delete() returns a query not a model object
+        query = models.Todo.delete().where(models.Todo.id==id)
+        query.execute()
+
         response_body = ''
         status_code = 204  # (no content)
         additional_headers = {
@@ -247,6 +201,6 @@ api.add_resource(
 )
 api.add_resource(
     ToDo,
-    '/todos/<id>',
+    '/todos/<int:id>',
     endpoint='todo'
 )
