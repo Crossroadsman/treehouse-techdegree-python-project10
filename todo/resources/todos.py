@@ -17,7 +17,6 @@ todo_fields = {
     'id': fields.Integer,
     'name': fields.String,
     'completed': fields.Boolean,
-    'edited': fields.Boolean,
 }
 
 
@@ -25,9 +24,13 @@ todo_fields = {
 # ----------------
 def set_reqparser():
     """The nature of this API is such that both List and Item resources
-    will need to handle `name`, `complete`, and `edited` fields. Therefore,
+    will need to handle `name`, and `completed` fields[note1]. Therefore,
     we can centralise the parser definition and just call it in each
-    resource's initialiser
+    resource's initialiser.
+
+    [note1]:  we don't need to do anything with `edited` because every request 
+    either persists to the database (thus clearing the edited flag) or reads 
+    from the database (i.e., loads a saved state)). 
     """
 
     parser = reqparse.RequestParser()
@@ -47,20 +50,10 @@ def set_reqparser():
         help='No todo name provided',
         location=['form', 'json']
     )
-    #
-    # We might want these later, so they are left for now.
     parser.add_argument(
         'completed',
         required=False,
         help='Invalid value for complete',
-        type=inputs.boolean,
-        location=['form', 'json'],
-        default=False
-    )
-    parser.add_argument(
-        'edited',
-        required=False,
-        help='Invalid value for edited',
         type=inputs.boolean,
         location=['form', 'json'],
         default=False
@@ -100,9 +93,6 @@ class ToDoList(Resource):
 
         # create the corresponding DB entry and return it
         todo = models.Todo.create(**pkwargs)
-        # Clear the 'edited' state on save
-        todo.edited = False
-        todo.save()
 
         # use marshal to convert the peewee model instance into a 
         # data structure that is JSONable.
@@ -152,16 +142,13 @@ class ToDo(Resource):
     def put(self, id):
         pkwargs = self.reqparse.parse_args()
 
-        # we're saving the current item's state so clear the edited
-        # status
-        pkwargs['edited'] = False
-
         # .update() returns a query not a model object
         query = models.Todo.update(**pkwargs).where(models.Todo.id==id)
         query.execute()
 
         # now we have to actually get the model
         response_body = models.Todo.get(models.Todo.id==id)
+        
         status_code = 200
         additional_headers = {
             'Location': url_for('resources.todos.todos')
