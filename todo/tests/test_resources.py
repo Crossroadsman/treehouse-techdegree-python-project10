@@ -130,7 +130,6 @@ class TestToDoList(unittest.TestCase):
             expected_data = test_todo_item_data[i]
             self.assertEqual(item['name'], expected_data['name'])
             self.assertEqual(item['completed'], expected_data['completed'])
-            self.assertFalse(item['edited'])
 
     def test_todolist_post_with_valid_data_returns_correct_response(self):
 
@@ -152,42 +151,12 @@ class TestToDoList(unittest.TestCase):
         expected_body = {
             'name': 'a valid test item',
             'completed': False,
-            'edited': False
         }
 
         self.assertEqual(response.status_code, expected_status)
         for key, value in expected_body.items():
             self.assertEqual(response_text[key], value)
     
-    '''
-    def test_todolist_post_with_invalid_json_returns_correct_response(self):
-        # get rid of this test as it doesn't seem possible for the app
-        # to emit non-json
-        uri = '/api/v1/todos'
-        headers = {
-            'ContentType': 'application/json',
-            'dataType': 'json'
-        }
-        data = "NOT JSON"
-
-        response = self.app.post(uri,
-                                 data=data,
-                                 content_type='application/json'
-        )
-
-        response_text = response.get_json()
-        
-        expected_status = 405
-        expected_body = {
-            'name': 'a valid test item',
-            'completed': False,
-            'edited': False
-        }
-        self.assertEqual(response.status_code, expected_status)
-        for key, value in expected_body.items():
-            self.assertEqual(response_text[key], value)
-    '''
-
 
 class TestToDo(unittest.TestCase):
 
@@ -264,7 +233,6 @@ class TestToDo(unittest.TestCase):
         self.assertEqual(response.status_code, expected_status_code)
         for key in ['name', 'completed']:
             self.assertEqual(json_data[key], expected_data[key])
-        self.assertFalse(json_data['edited'])
 
     def test_todo_put_with_completed_change_returns_correct_response(self):
 
@@ -305,7 +273,6 @@ class TestToDo(unittest.TestCase):
         self.assertEqual(response.status_code, expected_status_code)
         for key in ['name', 'completed']:
             self.assertEqual(json_data[key], expected_data[key])
-        self.assertFalse(json_data['edited'])
 
     def test_todo_put_with_changes_modifies_correctly(self):
         """The PUT request not should modify any other items"""
@@ -349,7 +316,6 @@ class TestToDo(unittest.TestCase):
         for i, item in enumerate(all_items):
             self.assertEqual(expected_data[i]['name'], item.name)
             self.assertEqual(expected_data[i]['completed'], item.completed)
-            self.assertFalse(item.edited)
 
     def test_todo_delete_with_valid_data_returns_correct_response(self):
         
