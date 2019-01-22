@@ -6,6 +6,9 @@ omit =
     # omit anything that is part of the virtual environment
     venv/*
 
+    # omit the test files themselves
+    tests/*
+
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =

@@ -1,7 +1,4 @@
 # tests/test_basic.py
-
-
-import sys
 import os
 import unittest
 import tempfile
@@ -80,7 +77,6 @@ class BasicTests(unittest.TestCase):
 # -----------------
 
 if __name__ == "__main__":
-    print(sys.path)
     unittest.main()
 
 
