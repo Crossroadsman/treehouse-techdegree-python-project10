@@ -148,6 +148,7 @@ class ToDo(Resource):
 
         # now we have to actually get the model
         response_body = models.Todo.get(models.Todo.id==id)
+        
         status_code = 200
         additional_headers = {
             'Location': url_for('resources.todos.todos')
