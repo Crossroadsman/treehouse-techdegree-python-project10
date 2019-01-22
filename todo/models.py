@@ -7,7 +7,6 @@ from peewee import *
 import config
 
 
-#DATABASE = SqliteDatabase(config.DATABASE_FILENAME)
 DATABASE = SqliteDatabase(None)
 
 # Models
@@ -19,10 +18,6 @@ class Todo(Model):
     name = CharField()
     created_date = DateTimeField(default=datetime.datetime.now)
     completed = BooleanField(default=False)
-    
-    # do we really need this field? It seems to be used just on the Angular
-    # side to represent changed since last database read.
-    edited = BooleanField(default=False)
 
     class Meta:
         database = DATABASE
