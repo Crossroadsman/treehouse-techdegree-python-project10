@@ -35,6 +35,11 @@ class TestApp(unittest.TestCase):
         self.assertIn(expected_text, response.data)
 
     def test_favicon_can_load_file(self):
+
+        # using 'with' explicitly closes the response (and thus the associated
+        # file) so we no longer get the ResourceWarning when running tests
+        # see also:
+        # https://note.mu/setomits/n/nb64b3cc2c428
         with self.app.get('/favicon.ico') as response:
             self.assertEqual(response.status_code, 200)
 
