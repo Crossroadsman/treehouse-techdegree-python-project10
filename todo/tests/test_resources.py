@@ -11,7 +11,6 @@ from peewee import *
 # `python3 -m unittest` from the main project directory
 # as long as the tests directory has a __init__.py file in it
 # (even though __init__.py is optional since Python 3.3)
-#from flask import current_app as app
 import app
 import config
 import models
