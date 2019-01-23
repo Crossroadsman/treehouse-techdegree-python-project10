@@ -23,7 +23,7 @@ And get coverage report:
 ```console
 (venv) $ coverage report
 ```
-12345678901234567890123456789012345678901234567890123456789012345678901234567890
+
 Project Status
 --------------
 ### Project Instructions ###
@@ -34,3 +34,41 @@ Project Status
   request to the server. Handle request by:
   - [ ] creating a Todo; and
   - [ ] setting the proper status code
+- [ ] When a previously saved Todo is updated and the save link is clicked, it
+  will make a request to the server. Handle the request by updating the 
+  existing Todo.
+- [ ] When a previously saved Todo is deleted and the save link is clicked, it
+  will make a request to the server.
+  - [ ] handle the deletion;
+  - [ ] return a blank response;
+  - [ ] return the proper status code.
+- [ ] Unit test the app:
+  - [ ] >50% test coverage;
+  - [ ] >75% test coverage.
+  
+### How You Will Be Graded ###
+- [ ] Peewee Model Classes for adding/editing/deleting Todo entries
+- [ ] Fetching Todos
+  - [ ] `GET /api/v1/todos` returns all todos; and
+  - [ ] populates web application.
+- [ ] Create a new Todo
+  - [ ] `POST /api/v1/todos` creates a new Todo;
+  - [ ] returns it; and
+  - [ ] sets the appropriate status code.
+- [ ] Update an existing Todo
+  - [ ] `PUT /api/v1/todos/xxx` is handled; and
+  - [ ] proper Todo is updated.
+- [ ] Delete an existing Todo
+  - [ ] `DELETE /api/v1/todos/xxx` deletes the appropriate Todo;
+  - [ ] sends back the appropriate status code; and
+  - [ ] an empty body.
+- [ ] Unit test the app
+  - [ ] There are unit tests for all the views;
+  - [ ] models; and
+  - [ ] other functions.
+  - [x] Test coverage >=50%
+  - [x] Test coverage >75%
+- [x] Python Code Style
+  - [x] Code is clean, readable, and well organized;
+  - [x] Complies with most common PEP8 standards.
+  
