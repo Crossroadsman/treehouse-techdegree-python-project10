@@ -26,7 +26,7 @@ And get coverage report:
 
 Project Status
 --------------
-### Project Instructions ###
+### vs Specs From Project Instructions ###
 - [x] This API is versioned, all routes should be prefixed with `/api/v1`
 - [x] When the app first starts it will attempt to fetch all Todos in the 
   system. Handle the request and return all the Todos.
@@ -46,7 +46,7 @@ Project Status
   - [ ] >=50% test coverage;
   - [ ] >75% test coverage.
   
-### How You Will Be Graded ###
+### vs Specs From How You Will Be Graded ###
 - [ ] Peewee Model Classes for adding/editing/deleting Todo entries
 - [ ] Fetching Todos
   - [ ] `GET /api/v1/todos` returns all todos; and
