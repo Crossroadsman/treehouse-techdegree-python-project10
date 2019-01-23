@@ -1,13 +1,12 @@
 import datetime
 
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
-                          BadSignature, SignatureExpired)
 from peewee import *
 
 import config
 
 
 DATABASE = SqliteDatabase(None)
+
 
 # Models
 # ------
@@ -31,7 +30,7 @@ def initialize():
     # at runtime (this allows us to change the DB filename from our test
     # suite before creating the database)
     # see:
-    # http://docs.peewee-orm.com/en/latest/peewee/database.html#run-time-database-configuration
+    # http://docs.peewee-orm.com/en/latest/peewee/database.html
     DATABASE.init(config.DATABASE_FILENAME)
     DATABASE.connect(reuse_if_open=True)
     DATABASE.create_tables([Todo], safe=True)
