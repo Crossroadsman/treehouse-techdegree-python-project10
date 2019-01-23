@@ -7,29 +7,7 @@ from peewee import *
 import app
 
 
-VERBOSE = False
-
-
 class TestApp(unittest.TestCase):
-    
-    # Helper Methods
-    # --------------
-    def probe_response(self, response):
-
-        # response is a flask.wrappers.Response object
-        print("==== DEBUG response object ====")
-        print(f"content_encoding: {response.content_encoding}")
-        print(f"data (byte string): {response.data}")
-        print(f"data type: {type(response.data)}")
-        print(f"get_data: {response.get_data()}")
-        print(f"status_code: {response.status_code}")
-        print(f"json: {response.json}")
-        print(f"get_json: {response.get_json()}")
-        print(f"headers: {response.headers}")
-        print(f"headers attributes: {dir(response.headers)}")
-        print(f"location: {response.location}")
-        print("==== END DEBUG response object ====")
-
 
     # Setup and Teardown
     # ------------------
@@ -47,28 +25,23 @@ class TestApp(unittest.TestCase):
     # -----
     def test_my_todos_can_load_page(self):
         response = self.app.get('/')
-        
-        if VERBOSE:
-            self.probe_response(response)
 
         self.assertEqual(response.status_code, 200)
 
     def test_my_todos_renders_correct_template(self):
         response = self.app.get('/')
 
-        if VERBOSE:
-            self.probe_response(response)
-
         expected_text = b'<title>Todo API with Flask</title>'
         self.assertIn(expected_text, response.data)
 
     def test_favicon_can_load_file(self):
-        response = self.app.get('/favicon.ico')
 
-        if VERBOSE:
-            self.probe_response(response)
-
-        self.assertEqual(response.status_code, 200)
+        # using 'with' explicitly closes the response (and thus the associated
+        # file) so we no longer get the ResourceWarning when running tests
+        # see also:
+        # https://note.mu/setomits/n/nb64b3cc2c428
+        with self.app.get('/favicon.ico') as response:
+            self.assertEqual(response.status_code, 200)
 
 
 # ------------------------
