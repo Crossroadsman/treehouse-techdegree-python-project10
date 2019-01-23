@@ -43,7 +43,7 @@ Project Status
   - [ ] return a blank response;
   - [ ] return the proper status code.
 - [ ] Unit test the app:
-  - [ ] >50% test coverage;
+  - [ ] >=50% test coverage;
   - [ ] >75% test coverage.
   
 ### How You Will Be Graded ###
