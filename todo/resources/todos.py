@@ -9,9 +9,6 @@ MODULE_PATH = 'resources.todos'
 NAMESPACE = __name__
 
 
-VERBOSE = True
-
-
 # FOR PARSING OUTPUT (USED BY MARSHAL)
 todo_fields = {
     'id': fields.Integer,
@@ -28,9 +25,9 @@ def set_reqparser():
     we can centralise the parser definition and just call it in each
     resource's initialiser.
 
-    [note1]:  we don't need to do anything with `edited` because every request 
-    either persists to the database (thus clearing the edited flag) or reads 
-    from the database (i.e., loads a saved state)). 
+    [note1]:  we don't need to do anything with `edited` because every request
+    either persists to the database (thus clearing the edited flag) or reads
+    from the database (i.e., loads a saved state)).
     """
 
     parser = reqparse.RequestParser()
@@ -81,20 +78,11 @@ class ToDoList(Resource):
         # Thus if there are input arguments in the JSON that we receive
         # but don't care about, we can just not parse them
         pkwargs = self.reqparse.parse_args()
-        if VERBOSE:
-            print("==== DEBUG POST (reqparse) ====")
-            for key, value in pkwargs.items():
-                print(f'key: {key}')
-                print(type(key))
-
-                print(f'value: {value}')
-                print(type(value))
-            print("==== END DEBUG POST (reqparse) ====")
 
         # create the corresponding DB entry and return it
         todo = models.Todo.create(**pkwargs)
 
-        # use marshal to convert the peewee model instance into a 
+        # use marshal to convert the peewee model instance into a
         # data structure that is JSONable.
         #
         # when used directly marshal takes:
@@ -143,23 +131,23 @@ class ToDo(Resource):
         pkwargs = self.reqparse.parse_args()
 
         # .update() returns a query not a model object
-        query = models.Todo.update(**pkwargs).where(models.Todo.id==id)
+        query = models.Todo.update(**pkwargs).where(models.Todo.id == id)
         query.execute()
 
         # now we have to actually get the model
-        response_body = models.Todo.get(models.Todo.id==id)
-        
+        response_body = models.Todo.get(models.Todo.id == id)
+
         status_code = 200
         additional_headers = {
             'Location': url_for('resources.todos.todos')
         }
-        
+
         return (response_body, status_code, additional_headers)
 
     def delete(self, id):
 
         # .delete() returns a query not a model object
-        query = models.Todo.delete().where(models.Todo.id==id)
+        query = models.Todo.delete().where(models.Todo.id == id)
         query.execute()
 
         response_body = ''
