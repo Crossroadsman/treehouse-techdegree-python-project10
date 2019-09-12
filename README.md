@@ -77,7 +77,7 @@ Feature Checklist
   - [x] Classes behave as expected
   - [x] Other functions behave as expected
   - [x] Coverage is at least 50%
-- [ ] Code is clean, readable, well-organized, PEP8 compliant
+- [x] Code is clean, readable, well-organized, PEP8 compliant
 
 ### Extra Credit Features ###
 
