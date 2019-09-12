@@ -56,27 +56,27 @@ Feature Checklist
   - [x] Create appropriate route
   - [x] Return all the Todos
   - [x] `GET /api/v1/todos` returns all Todos and populates the web application
-- [ ] Create Todo. When the save link is clicked, handle the request by:
-  - [ ] Creating a route that:
-  - [ ] Creates a Todo, and
-  - [ ] Sets the proper status code
-  - [ ] `POST /api/v1/todos` creates a new Todo, returns it, and sets the appropriate status code
-- [ ] Update Todo. When a previously saved Todo is updated and the save link is clicked, handle the request by:
-  - [ ] Creating a route that:
-  - [ ] Updates the existing Todo record
-  - [ ] `PUT /api/v1/todos/xxx` is handled and the proper Todo is updated
-- [ ] Delete Todo. When a previously saved Todo is deleted and the save link is clicked, handle the request by:
-  - [ ] Creating a route that:
-  - [ ] Deletes the record
-  - [ ] Returns a blank response
-  - [ ] Returns the proper status code
-  - [ ] `DELETE /api/v1/todos/xxx` deletes the appropriate Todo, sends back the appropriate status code and an empty body
-- [ ] Unit Testing. Write unit tests to ensure:
-  - [ ] Each view displays the correct information
-  - [ ] Models behave as expected
-  - [ ] Classes behave as expected
-  - [ ] Other functions behave as expected
-  - [ ] Coverage is at least 50%
+- [x] Create Todo. When the save link is clicked, handle the request by:
+  - [x] Creating a route that:
+  - [x] Creates a Todo, and
+  - [x] Sets the proper status code
+  - [x] `POST /api/v1/todos` creates a new Todo, returns it, and sets the appropriate status code
+- [x] Update Todo. When a previously saved Todo is updated and the save link is clicked, handle the request by:
+  - [x] Creating a route that:
+  - [x] Updates the existing Todo record
+  - [x] `PUT /api/v1/todos/xxx` is handled and the proper Todo is updated
+- [x] Delete Todo. When a previously saved Todo is deleted and the save link is clicked, handle the request by:
+  - [x] Creating a route that:
+  - [x] Deletes the record
+  - [x] Returns a blank response
+  - [x] Returns the proper status code
+  - [x] `DELETE /api/v1/todos/xxx` deletes the appropriate Todo, sends back the appropriate status code and an empty body
+- [x] Unit Testing. Write unit tests to ensure:
+  - [x] Each view displays the correct information
+  - [x] Models behave as expected
+  - [x] Classes behave as expected
+  - [x] Other functions behave as expected
+  - [x] Coverage is at least 50%
 - [ ] Code is clean, readable, well-organized, PEP8 compliant
 
 ### Extra Credit Features ###
