@@ -13,33 +13,49 @@ Installation
 
 Usage
 -----
+
+### Application ###
+
 Run the application from the `todo` directory:
 ```console
 (venv) $ python3 app.py
 ```
+
+**Important Usage Note**: When creating a Todo item, clicking anywhere on the page outside the text entry area is recognised
+by the Angular application as ending the text entry action and returning to the list view. Accordingly, clicking 'save' 
+during the text entry process **_is not recognised as a save request by the Angular App_** but merely as an 'end of text 
+entry' action. The save link is not recognised by the Angular app until the text editing action has ended.
+
+### Testing ###
 
 Run tests from the `todo` directory (unittest should auto discover them):
 ```console
 (venv) $ coverage run -m unittest
 ```
 
-And get coverage report:
+And view the coverage report:
 ```console
 (venv) $ coverage report
 ```
+
+Or generate a detailed HTML report from the coverage results:
+```console
+(venv) $ coverage html
+```
+
 
 Feature Checklist
 -----------------
 
 ### Base Features ###
 
-- [ ] API is versioned
-  - [ ] all routes should be prefixed with `/api/v1`
-- [ ] Fetch all Todos
-  - [ ] Handle the request
-  - [ ] Create appropriate route
-  - [ ] Return all the Todos
-  - [ ] `GET /api/v1/todos` returns all Todos and populates the web application
+- [x] API is versioned
+  - [x] all routes should be prefixed with `/api/v1`
+- [x] Fetch all Todos
+  - [x] Handle the request
+  - [x] Create appropriate route
+  - [x] Return all the Todos
+  - [x] `GET /api/v1/todos` returns all Todos and populates the web application
 - [ ] Create Todo. When the save link is clicked, handle the request by:
   - [ ] Creating a route that:
   - [ ] Creates a Todo, and
