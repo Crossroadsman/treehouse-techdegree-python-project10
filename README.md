@@ -5,7 +5,11 @@ Installation
 ------------
 1. Clone the project 
 2. Create and activate a venv
-3. Install dependencies (listed in requirements.txt)
+3. Install the application dependencies (listed in `requirements.txt`): `pip install -r requirements.txt` from 
+   the [`todo`](https://github.com/Crossroadsman/treehouse-techdegree-python-project10/tree/master/todo) directory
+4. To test the application, install the testing dependencies (listed in `test-requirements.txt`): 
+   `pip install -r test-requirements.txt` from the 
+   [`todo`](https://github.com/Crossroadsman/treehouse-techdegree-python-project10/tree/master/todo) directory
 
 Usage
 -----
